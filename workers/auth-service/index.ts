@@ -1,6 +1,6 @@
 /**
- * n.Solve - Auth Service Worker
- * Serviço de autenticação usando Cloudflare Workers + D1
+ * n.Solve - Auth Service Worker (RBAC Multi-tenant)
+ * Serviço de autenticação com suporte a multi-tenancy e RBAC
  */
 
 interface Env {
@@ -13,21 +13,31 @@ interface User {
   email: string;
   name: string;
   password_hash: string;
-  role: 'admin' | 'analyst' | 'viewer';
+  tenant_id: string;
+  is_super_admin: boolean;
   created_at: string;
   last_login?: string;
+}
+
+interface UserTenantRole {
+  user_id: string;
+  tenant_id: string;
+  tenant_slug: string;
+  tenant_name: string;
+  role: string;
 }
 
 interface LoginRequest {
   email: string;
   password: string;
+  tenant_slug?: string; // Opcional: para quando usuário está em múltiplos tenants
 }
 
 interface RegisterRequest {
   email: string;
   password: string;
   name: string;
-  role?: 'admin' | 'analyst' | 'viewer';
+  tenant_slug?: string;
 }
 
 /**
@@ -43,15 +53,19 @@ async function hashPassword(password: string): Promise<string> {
 }
 
 /**
- * Gerar JWT token
+ * Gerar JWT token com tenant info
  */
-async function generateToken(user: Partial<User>, secret: string): Promise<string> {
+async function generateToken(user: Partial<User>, tenantInfo: UserTenantRole, secret: string): Promise<string> {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
   const payload = btoa(JSON.stringify({
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role,
+    tenant_id: tenantInfo.tenant_id,
+    tenant_slug: tenantInfo.tenant_slug,
+    tenant_name: tenantInfo.tenant_name,
+    role: tenantInfo.role,
+    is_super_admin: user.is_super_admin || false,
     exp: Date.now() + (30 * 24 * 60 * 60 * 1000), // 30 days
   }));
 
@@ -110,6 +124,31 @@ async function verifyToken(token: string, secret: string): Promise<any> {
 }
 
 /**
+ * Buscar tenants do usuário
+ */
+async function getUserTenants(userId: string, env: Env): Promise<UserTenantRole[]> {
+  const results = await env.VLM_DB
+    .prepare(`
+      SELECT 
+        utr.user_id,
+        t.id as tenant_id,
+        t.slug as tenant_slug,
+        t.name as tenant_name,
+        r.name as role
+      FROM user_tenant_roles utr
+      JOIN tenants t ON utr.tenant_id = t.id
+      JOIN roles r ON utr.role_id = r.id
+      WHERE utr.user_id = ?
+        AND t.status = 'active'
+      ORDER BY utr.created_at ASC
+    `)
+    .bind(userId)
+    .all<UserTenantRole>();
+
+  return results.results || [];
+}
+
+/**
  * Handler: POST /auth/login
  */
 async function handleLogin(request: Request, env: Env): Promise<Response> {
@@ -137,14 +176,39 @@ async function handleLogin(request: Request, env: Env): Promise<Response> {
       });
     }
 
+    // Buscar tenants do usuário
+    const userTenants = await getUserTenants(result.id, env);
+
+    if (userTenants.length === 0 && !result.is_super_admin) {
+      return new Response(JSON.stringify({ message: 'User has no tenant access' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Se tenant_slug foi especificado, usar esse tenant
+    let selectedTenant = userTenants[0]; // Default: primeiro tenant
+    
+    if (body.tenant_slug) {
+      const found = userTenants.find(t => t.tenant_slug === body.tenant_slug);
+      if (found) {
+        selectedTenant = found;
+      } else {
+        return new Response(JSON.stringify({ message: 'User does not have access to this tenant' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     // Atualizar last_login
     await env.VLM_DB
       .prepare('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?')
       .bind(result.id)
       .run();
 
-    // Gerar token
-    const token = await generateToken(result, env.JWT_SECRET);
+    // Gerar token com info do tenant
+    const token = await generateToken(result, selectedTenant, env.JWT_SECRET);
 
     return new Response(JSON.stringify({
       success: true,
@@ -152,8 +216,20 @@ async function handleLogin(request: Request, env: Env): Promise<Response> {
         id: result.id,
         email: result.email,
         name: result.name,
-        role: result.role,
+        is_super_admin: result.is_super_admin,
       },
+      tenant: {
+        id: selectedTenant.tenant_id,
+        slug: selectedTenant.tenant_slug,
+        name: selectedTenant.tenant_name,
+        role: selectedTenant.role,
+      },
+      available_tenants: userTenants.map(t => ({
+        id: t.tenant_id,
+        slug: t.tenant_slug,
+        name: t.tenant_name,
+        role: t.role,
+      })),
       token,
     }), {
       status: 200,
@@ -198,25 +274,50 @@ async function handleRegister(request: Request, env: Env): Promise<Response> {
     // Hash password
     const passwordHash = await hashPassword(body.password);
 
+    // Determinar tenant (ou criar novo)
+    let tenantId = 'tenant_ness'; // Default
+    
+    if (body.tenant_slug) {
+      const tenant = await env.VLM_DB
+        .prepare('SELECT id FROM tenants WHERE slug = ?')
+        .bind(body.tenant_slug)
+        .first<{id: string}>();
+      
+      if (tenant) {
+        tenantId = tenant.id;
+      }
+    }
+
     // Criar usuário
-    const id = crypto.randomUUID();
+    const userId = crypto.randomUUID();
     await env.VLM_DB
-      .prepare('INSERT INTO users (id, email, name, password_hash, role) VALUES (?, ?, ?, ?, ?)')
-      .bind(id, body.email, body.name, passwordHash, body.role || 'viewer')
+      .prepare('INSERT INTO users (id, email, name, password_hash, tenant_id) VALUES (?, ?, ?, ?, ?)')
+      .bind(userId, body.email, body.name, passwordHash, tenantId)
+      .run();
+
+    // Atribuir role 'user' por padrão
+    const roleId = 'role_user';
+    await env.VLM_DB
+      .prepare('INSERT INTO user_tenant_roles (id, user_id, tenant_id, role_id) VALUES (?, ?, ?, ?)')
+      .bind(`utr_${userId}`, userId, tenantId, roleId)
       .run();
 
     // Buscar usuário criado
     const user = await env.VLM_DB
       .prepare('SELECT * FROM users WHERE id = ?')
-      .bind(id)
+      .bind(userId)
       .first<User>();
 
     if (!user) {
       throw new Error('Failed to create user');
     }
 
+    // Buscar tenant info
+    const userTenants = await getUserTenants(userId, env);
+    const tenantInfo = userTenants[0];
+
     // Gerar token
-    const token = await generateToken(user, env.JWT_SECRET);
+    const token = await generateToken(user, tenantInfo, env.JWT_SECRET);
 
     return new Response(JSON.stringify({
       success: true,
@@ -224,7 +325,12 @@ async function handleRegister(request: Request, env: Env): Promise<Response> {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+      },
+      tenant: {
+        id: tenantInfo.tenant_id,
+        slug: tenantInfo.tenant_slug,
+        name: tenantInfo.tenant_name,
+        role: tenantInfo.role,
       },
       token,
     }), {
@@ -265,6 +371,80 @@ async function handleVerify(request: Request, env: Env): Promise<Response> {
   return new Response(JSON.stringify({
     success: true,
     user: decoded,
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
+
+/**
+ * Handler: POST /auth/switch-tenant
+ * Trocar de tenant (quando usuário tem acesso a múltiplos tenants)
+ */
+async function handleSwitchTenant(request: Request, env: Env): Promise<Response> {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  const decoded = await verifyToken(token, env.JWT_SECRET);
+
+  if (!decoded) {
+    return new Response(JSON.stringify({ message: 'Invalid token' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const body: { tenant_slug: string } = await request.json();
+
+  if (!body.tenant_slug) {
+    return new Response(JSON.stringify({ message: 'tenant_slug is required' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Buscar todos os tenants do usuário
+  const userTenants = await getUserTenants(decoded.id, env);
+  const newTenant = userTenants.find(t => t.tenant_slug === body.tenant_slug);
+
+  if (!newTenant) {
+    return new Response(JSON.stringify({ message: 'User does not have access to this tenant' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Buscar user info
+  const user = await env.VLM_DB
+    .prepare('SELECT * FROM users WHERE id = ?')
+    .bind(decoded.id)
+    .first<User>();
+
+  if (!user) {
+    return new Response(JSON.stringify({ message: 'User not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  // Gerar novo token com novo tenant
+  const newToken = await generateToken(user, newTenant, env.JWT_SECRET);
+
+  return new Response(JSON.stringify({
+    success: true,
+    tenant: {
+      id: newTenant.tenant_id,
+      slug: newTenant.tenant_slug,
+      name: newTenant.tenant_name,
+      role: newTenant.role,
+    },
+    token: newToken,
   }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
@@ -325,6 +505,14 @@ export default {
       return response;
     }
 
+    if (url.pathname === '/auth/switch-tenant' && request.method === 'POST') {
+      const response = await handleSwitchTenant(request, env);
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+      return response;
+    }
+
     if (url.pathname === '/auth/logout' && request.method === 'POST') {
       const response = await handleLogout();
       Object.entries(corsHeaders).forEach(([key, value]) => {
@@ -336,4 +524,3 @@ export default {
     return new Response('Not Found', { status: 404, headers: corsHeaders });
   },
 };
-
