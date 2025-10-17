@@ -1,43 +1,39 @@
 /**
- * n.Solve - Middleware de Autenticação
- * Protege rotas que requerem autenticação
+ * n.Solve - Auth Middleware
+ * Protects routes requiring authentication
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// Rotas públicas que não precisam de autenticação
+// Public routes (no auth required)
 const publicRoutes = [
-  '/auth/v1/login',
-  '/auth/v2/login',
-  '/auth/v1/register',
-  '/auth/v2/register',
-  '/auth/forgot-password',
-  '/auth/reset-password',
+  "/auth/v1/login",
+  "/auth/v2/login",
+  "/auth/v1/register",
+  "/auth/v2/register",
+  "/",
 ];
-
-// Rotas que devem redirecionar para dashboard se já autenticado
-const authRoutes = publicRoutes;
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Obter token dos cookies ou headers
-  const token = request.cookies.get('auth_token')?.value || 
-                request.headers.get('authorization')?.replace('Bearer ', '');
+  // Check if route is public
+  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route) || pathname === route);
 
+  // Get token from cookies
+  const token = request.cookies.get("auth_token")?.value;
   const isAuthenticated = !!token;
 
-  // Se está em rota pública e já autenticado, redirecionar para dashboard
-  if (authRoutes.some(route => pathname.startsWith(route)) && isAuthenticated) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // If accessing public route and authenticated, redirect to dashboard
+  if (isPublicRoute && isAuthenticated && !pathname.includes("/auth/")) {
+    return NextResponse.redirect(new URL("/dashboard/default", request.url));
   }
 
-  // Se não está autenticado e tentando acessar rota protegida
-  if (!publicRoutes.some(route => pathname.startsWith(route)) && !isAuthenticated) {
-    // Redirecionar para login
-    const loginUrl = new URL('/auth/v2/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
+  // If accessing protected route and not authenticated, redirect to login
+  if (!isPublicRoute && !isAuthenticated) {
+    const loginUrl = new URL("/auth/v2/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -46,15 +42,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public folder)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
-
