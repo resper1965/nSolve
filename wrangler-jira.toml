@@ -1,0 +1,36 @@
+# jira-integration configuration
+name = "jira-integration"
+main = "workers/jira-integration/index.ts"
+compatibility_date = "2024-01-15"
+
+# Routes
+routes = [
+  { pattern = "jira.ness.tec.br/*", zone_name = "ness.tec.br" }
+]
+
+# Environment variables
+[vars]
+CORE_PROCESSOR_URL = "https://core-processor.ness.workers.dev"
+TRANSLATION_AGENT_URL = "https://translation-agent.ness.workers.dev"
+JIRA_INTEGRATION_URL = "https://jira-integration.ness.workers.dev"
+
+# D1 Database
+[[d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "9b16f85c-715e-4a09-aa7e-482b17d0c208"
+
+# R2 Storage
+[[r2_buckets]]
+binding = "VLM_STORAGE"
+bucket_name = "ness-vlm-storage"
+
+# AI (Workers AI)
+[ai]
+binding = "AI"
+
+# KV Namespace for rate limiting
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f89200c908114f39bdb44e55f0244be3"
+

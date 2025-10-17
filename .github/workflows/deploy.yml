@@ -3,12 +3,12 @@ name: Deploy n.Solve to Cloudflare Workers
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    name: Deploy Workers with Custom Domains
     
     steps:
     - name: Checkout code
@@ -20,12 +20,36 @@ jobs:
         node-version: '18'
         
     - name: Install dependencies
-      run: npm install
+      run: npm ci
       
-    - name: Build project
-      run: npm run build
+    - name: Install Wrangler
+      run: npm install -g wrangler
       
-    - name: Deploy to Cloudflare Workers
-      run: npm run deploy
+    - name: Deploy webhook-receiver
       env:
         CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: wrangler deploy --config wrangler-webhook.toml
+      
+    - name: Deploy core-processor
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: wrangler deploy --config wrangler-core.toml
+      
+    - name: Deploy translation-agent
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: wrangler deploy --config wrangler-translation.toml
+      
+    - name: Deploy jira-integration
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      run: wrangler deploy --config wrangler-jira.toml
+      
+    - name: Deployment Summary
+      run: |
+        echo "✅ Deployment complete!"
+        echo "📊 Workers deployed:"
+        echo "   - webhooks.ness.tec.br (webhook-receiver)"
+        echo "   - api.ness.tec.br (core-processor)"
+        echo "   - translate.ness.tec.br (translation-agent)"
+        echo "   - jira.ness.tec.br (jira-integration)"
