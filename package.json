@@ -7,7 +7,7 @@
   "scripts": {
     "build": "echo 'Workers build handled by Wrangler'",
     "dev": "wrangler dev",
-    "deploy": "./wrangler deploy",
+    "deploy": "./force-deploy.sh",
     "deploy:webhook": "wrangler deploy --name webhook-receiver",
     "deploy:core": "wrangler deploy --name core-processor",
     "deploy:translation": "wrangler deploy --name translation-agent",
