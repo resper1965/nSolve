@@ -54,26 +54,19 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
     // Salvar token
     if (data.token) {
-      console.log('Saving auth token:', data.token.substring(0, 20) + '...');
+      console.log('🔐 Saving auth token');
       
-      // Salvar em cookies (para middleware) - max-age em segundos
-      const maxAge = credentials.remember ? 30 * 24 * 60 * 60 : 24 * 60 * 60; // 30 dias ou 1 dia
-      document.cookie = `auth_token=${data.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
-      
-      console.log('Cookie set:', document.cookie.includes('auth_token'));
+      // Salvar em cookies (para middleware)
+      const maxAge = credentials.remember ? 30 * 24 * 60 * 60 : 86400; // 30 dias ou 1 dia
+      document.cookie = `auth_token=${data.token}; path=/; max-age=${maxAge}; samesite=lax`;
       
       // Salvar em storage (para frontend)
-      if (credentials.remember) {
-        localStorage.setItem('auth_token', data.token);
-        localStorage.setItem('auth_user', JSON.stringify(data.user));
-        localStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
-      } else {
-        sessionStorage.setItem('auth_token', data.token);
-        sessionStorage.setItem('auth_user', JSON.stringify(data.user));
-        sessionStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
-      }
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(data.user));
+      localStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
       
-      console.log('Auth saved successfully');
+      console.log('✅ Auth saved - Cookie:', document.cookie.substring(0, 50));
+      console.log('✅ LocalStorage:', !!localStorage.getItem('auth_token'));
     }
 
     return {
