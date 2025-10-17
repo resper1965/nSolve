@@ -31,7 +31,7 @@ echo ""
 
 # Deploy Webhook Receiver
 echo "📡 Deploying webhook-receiver..."
-wrangler deploy --name webhook-receiver
+wrangler deploy workers/webhook-receiver/index.ts --name webhook-receiver
 if [ $? -ne 0 ]; then
     echo "❌ Erro no deploy do webhook-receiver"
     exit 1
@@ -39,7 +39,7 @@ fi
 
 # Deploy Core Processor  
 echo "⚙️ Deploying core-processor..."
-wrangler deploy --name core-processor
+wrangler deploy workers/core-processor/index.ts --name core-processor
 if [ $? -ne 0 ]; then
     echo "❌ Erro no deploy do core-processor"
     exit 1
@@ -47,7 +47,7 @@ fi
 
 # Deploy Translation Agent
 echo "🌐 Deploying translation-agent..."
-wrangler deploy --name translation-agent
+wrangler deploy workers/translation-agent/index.ts --name translation-agent
 if [ $? -ne 0 ]; then
     echo "❌ Erro no deploy do translation-agent"
     exit 1
@@ -55,7 +55,7 @@ fi
 
 # Deploy Jira Integration
 echo "🎫 Deploying jira-integration..."
-wrangler deploy --name jira-integration
+wrangler deploy workers/jira-integration/index.ts --name jira-integration
 if [ $? -ne 0 ]; then
     echo "❌ Erro no deploy do jira-integration"
     exit 1

@@ -13,7 +13,7 @@ JIRA_INTEGRATION_URL = "https://jira-integration.workers.dev"
 [[d1_databases]]
 binding = "VLM_DB"
 database_name = "ness_vlm_db"
-database_id = "your-database-id-here"
+database_id = "9b16f85c-715e-4a09-aa7e-482b17d0c208"
 
 # R2 Storage
 [[r2_buckets]]
@@ -27,28 +27,4 @@ binding = "AI"
 # KV Namespace for rate limiting
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "your-kv-namespace-id-here"
-
-# Worker 1: Webhook Receiver
-[[workers]]
-name = "webhook-receiver"
-main = "workers/webhook-receiver/index.ts"
-compatibility_date = "2024-01-15"
-
-# Worker 2: Core Processor
-[[workers]]
-name = "core-processor"
-main = "workers/core-processor/index.ts"
-compatibility_date = "2024-01-15"
-
-# Worker 3: Translation Agent
-[[workers]]
-name = "translation-agent"
-main = "workers/translation-agent/index.ts"
-compatibility_date = "2024-01-15"
-
-# Worker 4: Jira Integration
-[[workers]]
-name = "jira-integration"
-main = "workers/jira-integration/index.ts"
-compatibility_date = "2024-01-15"
+id = "f89200c908114f39bdb44e55f0244be3"
