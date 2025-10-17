@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "echo 'Workers build handled by Wrangler'",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:webhook": "wrangler deploy --name webhook-receiver",
