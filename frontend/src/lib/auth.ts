@@ -54,8 +54,13 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
     // Salvar token
     if (data.token) {
-      // Salvar em cookies (para middleware)
-      document.cookie = `auth_token=${data.token}; path=/; max-age=${credentials.remember ? 30 * 24 * 60 * 60 : 0}; SameSite=Strict`;
+      console.log('Saving auth token:', data.token.substring(0, 20) + '...');
+      
+      // Salvar em cookies (para middleware) - max-age em segundos
+      const maxAge = credentials.remember ? 30 * 24 * 60 * 60 : 24 * 60 * 60; // 30 dias ou 1 dia
+      document.cookie = `auth_token=${data.token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+      
+      console.log('Cookie set:', document.cookie.includes('auth_token'));
       
       // Salvar em storage (para frontend)
       if (credentials.remember) {
@@ -67,6 +72,8 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
         sessionStorage.setItem('auth_user', JSON.stringify(data.user));
         sessionStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
       }
+      
+      console.log('Auth saved successfully');
     }
 
     return {

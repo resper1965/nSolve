@@ -45,14 +45,14 @@ export function LoginForm() {
       if (result.success && result.user) {
         toast.success("Authentication successful", {
           description: `Welcome back, ${result.user.name}`,
-          duration: 2000,
+          duration: 1500,
         });
 
+        // Aguardar cookie ser salvo e redirect
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Redirect to dashboard
-        setTimeout(() => {
-          router.push("/dashboard/default");
-          router.refresh();
-        }, 500);
+        window.location.href = "/dashboard/default";
       } else {
         toast.error("Authentication failed", {
           description: result.message || "Invalid email or password.",
