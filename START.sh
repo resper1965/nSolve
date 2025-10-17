@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ness. VLM Tracker - Script de Início Rápido
+# n.Solve - Script de Início Rápido
 # Para a conta: resper@ness.com.br
 # Domínio: ness.tec.br
 
@@ -11,7 +11,7 @@ clear
 echo ""
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║                                                              ║"
-echo "║              ness. VLM Tracker - Deploy                     ║"
+echo "║              n.Solve - Deploy                     ║"
 echo "║                                                              ║"
 echo "║          Cloudflare Edge Computing Edition                  ║"
 echo "║                                                              ║"

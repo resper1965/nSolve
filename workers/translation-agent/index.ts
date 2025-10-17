@@ -1,5 +1,5 @@
 /**
- * ness. VLM Tracker - Translation Agent Worker
+ * n.Solve - Translation Agent Worker
  * Cloudflare Workers AI - Edge Computing
  * 
  * Responsabilidades:

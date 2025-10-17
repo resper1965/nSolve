@@ -1,4 +1,4 @@
--- ness. VLM Tracker - D1 Database Schema
+-- n.Solve - D1 Database Schema
 -- SQLite (Cloudflare D1)
 -- 
 -- Migrado de PostgreSQL para SQLite

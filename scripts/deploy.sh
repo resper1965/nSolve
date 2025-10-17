@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ness. VLM Tracker - Deploy Script
+# n.Solve - Deploy Script
 # Cloudflare Edge Computing
 #
 # Este script automatiza o deploy completo
@@ -9,7 +9,7 @@ set -e
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║                                                              ║"
-echo "║        ness. VLM Tracker - Cloudflare Deploy                ║"
+echo "║        n.Solve - Cloudflare Deploy                ║"
 echo "║              Edge Computing Edition                          ║"
 echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"

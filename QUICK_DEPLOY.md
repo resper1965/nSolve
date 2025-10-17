@@ -1,4 +1,4 @@
-# 🚀 Deploy Rápido - ness. VLM Tracker
+# 🚀 Deploy Rápido - n.Solve
 
 ## ⚡ Guia Simplificado (SEM Jira)
 
@@ -303,7 +303,7 @@ npx wrangler tail core-processor --format=pretty
 
 ## 🎉 PRONTO!
 
-Seu **ness. VLM Tracker** está no ar!
+Seu **n.Solve** está no ar!
 
 **URLs:**
 - Webhook: `https://webhook-receiver.SEU-SUBDOMINIO.workers.dev`

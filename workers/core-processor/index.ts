@@ -1,5 +1,5 @@
 /**
- * ness. VLM Tracker - Core Processor Worker
+ * n.Solve - Core Processor Worker
  * Cloudflare Workers - Edge Computing
  * 
  * Responsabilidades:

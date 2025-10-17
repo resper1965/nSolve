@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-Você vai configurar subdomínios no **ness.tec.br** para o VLM Tracker:
+Você vai configurar subdomínios no **ness.tec.br** para o n.Solve - Vulnerability Lifecycle Manager:
 
 | Subdomínio | Função | Worker |
 |------------|--------|--------|

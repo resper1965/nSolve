@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# ness. VLM Tracker - Domain Setup Helper
+# n.Solve - Domain Setup Helper
 # Facilita configuração do domínio ness.tec.br
 
 set -e
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║                                                              ║"
-echo "║        ness. VLM Tracker - Domain Setup                     ║"
+echo "║        n.Solve - Domain Setup                     ║"
 echo "║              ness.tec.br                                     ║"
 echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"

@@ -1,17 +1,18 @@
 {
-  "name": "ness-vlm-tracker-cloudflare",
+  "name": "n-solve-cloudflare",
   "version": "2.0.0",
-  "description": "ness. VLM Tracker - Cloudflare Edge Computing Edition",
+  "description": "n.Solve - Vulnerability Lifecycle Manager | Cloudflare Edge Computing",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "deploy:webhook": "wrangler deploy workers/webhook-receiver/index.ts",
-    "deploy:core": "wrangler deploy workers/core-processor/index.ts",
-    "deploy:translation": "wrangler deploy workers/translation-agent/index.ts",
-    "deploy:jira": "wrangler deploy workers/jira-integration/index.ts",
+    "deploy:webhook": "wrangler deploy --name webhook-receiver",
+    "deploy:core": "wrangler deploy --name core-processor",
+    "deploy:translation": "wrangler deploy --name translation-agent",
+    "deploy:jira": "wrangler deploy --name jira-integration",
     "db:init": "wrangler d1 execute ness_vlm_db --file=schema/d1-schema.sql",
+    "db:query": "wrangler d1 execute ness_vlm_db",
     "db:migrations": "wrangler d1 migrations list ness_vlm_db",
     "tail:webhook": "wrangler tail webhook-receiver",
     "tail:core": "wrangler tail core-processor",
@@ -29,5 +30,26 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "keywords": [
+    "n.Solve",
+    "ness",
+    "vulnerability-management",
+    "cloudflare",
+    "edge-computing",
+    "security",
+    "pentest",
+    "workers",
+    "d1",
+    "typescript"
+  ],
+  "author": "ness. <security@ness.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/resper1965/nSolve.git"
+  },
+  "bugs": {
+    "url": "https://github.com/resper1965/nSolve/issues"
+  },
+  "homepage": "https://github.com/resper1965/nSolve#readme"
 }

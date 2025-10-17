@@ -1,5 +1,5 @@
 /**
- * ness. VLM Tracker - Jira Integration Worker
+ * n.Solve - Jira Integration Worker
  * Cloudflare Workers - Edge Computing
  * 
  * Responsabilidades:
@@ -76,7 +76,7 @@ h3. Informações Técnicas
 *Timestamp do Scan:* ${finding.scan_timestamp}
 
 ---
-_Ticket criado automaticamente pelo ness. VLM Tracker (Cloudflare Edge)_`;
+_Ticket criado automaticamente pelo n.Solve (Cloudflare Edge)_`;
 
   // Payload Jira API v3
   const payload = {

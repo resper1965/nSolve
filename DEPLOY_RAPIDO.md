@@ -126,7 +126,7 @@ curl -X POST https://webhooks.ness.tec.br/ \
 
 ## ✅ PRONTO!
 
-Seu **ness. VLM Tracker** está funcionando em:
+Seu **n.Solve** está funcionando em:
 
 - 🌐 **https://webhooks.ness.tec.br** ← Endpoint público
 - 🌐 **https://api.ness.tec.br** ← API interna

@@ -1,4 +1,4 @@
-# ness. VLM Tracker - Cloudflare Edge Computing Edition
+# n.Solve - Cloudflare Edge Computing Edition
 
 ![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square)
@@ -9,7 +9,7 @@
 
 ## 🚀 Migração Completa: GCP → Cloudflare
 
-Esta é a versão **2.0** do ness. VLM Tracker, totalmente reescrita para aproveitar a **Rede Global da Cloudflare** e **Edge Computing**.
+Esta é a versão **2.0** do n.Solve, totalmente reescrita para aproveitar a **Rede Global da Cloudflare** e **Edge Computing**.
 
 ### 🔄 Mapeamento de Tecnologias
 

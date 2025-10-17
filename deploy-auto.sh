@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# ness. VLM Tracker - Deploy Totalmente Automatizado
+# n.Solve - Deploy Totalmente Automatizado
 # Este script faz TUDO automaticamente
 
 set -e
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║                                                              ║"
-echo "║        ness. VLM Tracker - Deploy Automático                ║"
+echo "║        n.Solve - Deploy Automático                ║"
 echo "║          Cloudflare Edge Computing                          ║"
 echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
@@ -363,7 +363,7 @@ echo ""
 
 # Salvar URLs em arquivo
 cat > deployment-urls.txt << URLFILE
-# ness. VLM Tracker - Deployment URLs
+# n.Solve - Deployment URLs
 # Gerado automaticamente em: $(date)
 
 ## Workers URLs (.workers.dev)

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# ness. VLM Tracker - Setup Secrets
+# n.Solve - Setup Secrets
 # Configuração de secrets no Cloudflare
 
 set -e
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║                                                              ║"
-echo "║        ness. VLM Tracker - Setup Secrets                    ║"
+echo "║        n.Solve - Setup Secrets                    ║"
 echo "║              Cloudflare Workers                              ║"
 echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"

@@ -1,4 +1,4 @@
-# ✅ Checklist de Deploy - ness. VLM Tracker Cloudflare
+# ✅ Checklist de Deploy - n.Solve Cloudflare
 
 ## 📋 PRÉ-REQUISITOS
 
@@ -22,7 +22,7 @@
 **Como criar API Token:**
 1. Acesse: https://id.atlassian.com/manage-profile/security/api-tokens
 2. Clique em "Create API token"
-3. Dê um nome: "ness VLM Tracker"
+3. Dê um nome: "ness n.Solve - Vulnerability Lifecycle Manager"
 4. Copie o token (só aparece uma vez!)
 
 ---
@@ -393,7 +393,7 @@ Após completar tudo acima:
 
 ## 🎉 PRONTO!
 
-Seu **ness. VLM Tracker** está rodando no Edge da Cloudflare!
+Seu **n.Solve** está rodando no Edge da Cloudflare!
 
 **Próximos passos:**
 1. Configure suas ferramentas de pentest
