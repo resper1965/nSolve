@@ -1,0 +1,34 @@
+# n.Solve - Wrangler Configuration (Simplified)
+name = "nsolve"
+main = "workers/webhook-receiver/index.ts"
+compatibility_date = "2024-01-15"
+
+# Environment variables
+[vars]
+CORE_PROCESSOR_URL = "https://core-processor.workers.dev"
+
+# D1 Database
+[[d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "your-database-id-here"
+
+# R2 Storage
+[[r2_buckets]]
+binding = "VLM_STORAGE"
+bucket_name = "ness-vlm-storage"
+
+# AI (Workers AI)
+[ai]
+binding = "AI"
+
+# KV Namespace for rate limiting
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "your-kv-namespace-id-here"
+
+# Routes (custom domains)
+routes = [
+  "webhooks.ness.tec.br/*",
+  "api.ness.tec.br/*"
+]
