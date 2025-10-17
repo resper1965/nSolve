@@ -1,38 +1,51 @@
 import { ReactNode } from "react";
-
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
-import { APP_CONFIG } from "@/config/app-config";
-import { getPreference } from "@/server/server-actions";
 import { PreferencesStoreProvider } from "@/stores/preferences/preferences-provider";
-import { THEME_MODE_VALUES, THEME_PRESET_VALUES, type ThemePreset, type ThemeMode } from "@/types/preferences/theme";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ 
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-montserrat",
+});
 
 export const metadata: Metadata = {
-  title: APP_CONFIG.meta.title,
-  description: APP_CONFIG.meta.description,
+  title: "n.Solve | ness. Vulnerability Lifecycle Manager",
+  description: "Professional vulnerability lifecycle management platform powered by ness.",
+  keywords: ["vulnerability", "security", "pentest", "lifecycle", "management", "ness"],
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  const themeMode = await getPreference<ThemeMode>("theme_mode", THEME_MODE_VALUES, "light");
-  const themePreset = await getPreference<ThemePreset>("theme_preset", THEME_PRESET_VALUES, "default");
-
   return (
     <html
       lang="en"
-      className={themeMode === "dark" ? "dark" : ""}
-      data-theme-preset={themePreset}
+      className="dark"
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-screen antialiased`}>
-        <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
+      <head>
+        <style>{`
+          :root {
+            --font-montserrat: ${montserrat.style.fontFamily};
+          }
+        `}</style>
+      </head>
+      <body className={`${montserrat.className} min-h-screen antialiased bg-[#0B0C0E] text-[#EEF1F6]`}>
+        <PreferencesStoreProvider themeMode="dark" themePreset="default">
           {children}
-          <Toaster />
+          <Toaster 
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: '#111317',
+                border: '1px solid #1B2030',
+                color: '#EEF1F6',
+              },
+            }}
+          />
         </PreferencesStoreProvider>
       </body>
     </html>

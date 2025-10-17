@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input";
 import { login } from "@/lib/auth";
 
 const FormSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um email válido." }),
-  password: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
   remember: z.boolean().optional(),
 });
 
@@ -43,24 +43,25 @@ export function LoginForm() {
       });
 
       if (result.success && result.user) {
-        toast.success("Login realizado com sucesso!", {
-          description: `Bem-vindo(a), ${result.user.name}!`,
+        toast.success("Authentication successful", {
+          description: `Welcome back, ${result.user.name}`,
+          duration: 2000,
         });
 
-        // Redirecionar para dashboard
+        // Redirect to dashboard
         setTimeout(() => {
-          router.push("/dashboard");
+          router.push("/dashboard/default");
           router.refresh();
-        }, 1000);
+        }, 500);
       } else {
-        toast.error("Falha no login", {
-          description: result.message || "Email ou senha incorretos.",
+        toast.error("Authentication failed", {
+          description: result.message || "Invalid email or password.",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Erro no login", {
-        description: "Ocorreu um erro ao tentar fazer login. Tente novamente.",
+      toast.error("Connection error", {
+        description: "Unable to connect to authentication service. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -75,18 +76,19 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-[#EEF1F6]">Email Address</FormLabel>
               <FormControl>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  placeholder="seu@email.com" 
-                  autoComplete="email" 
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  autoComplete="email"
                   disabled={isLoading}
-                  {...field} 
+                  className="bg-[#111317] border-[#1B2030] text-[#EEF1F6] placeholder:text-[#9CA3AF] focus-visible:ring-[#00ADE8]"
+                  {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-400" />
             </FormItem>
           )}
         />
@@ -95,7 +97,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <FormLabel className="text-[#EEF1F6]">Password</FormLabel>
               <FormControl>
                 <Input
                   id="password"
@@ -103,10 +105,11 @@ export function LoginForm() {
                   placeholder="••••••••"
                   autoComplete="current-password"
                   disabled={isLoading}
+                  className="bg-[#111317] border-[#1B2030] text-[#EEF1F6] placeholder:text-[#9CA3AF] focus-visible:ring-[#00ADE8]"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-400" />
             </FormItem>
           )}
         />
@@ -114,24 +117,28 @@ export function LoginForm() {
           control={form.control}
           name="remember"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center">
+            <FormItem className="flex flex-row items-center gap-2">
               <FormControl>
                 <Checkbox
                   id="login-remember"
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   disabled={isLoading}
-                  className="size-4"
+                  className="size-4 border-[#1B2030] data-[state=checked]:bg-[#00ADE8] data-[state=checked]:border-[#00ADE8]"
                 />
               </FormControl>
-              <FormLabel htmlFor="login-remember" className="text-muted-foreground ml-1 text-sm font-medium">
-                Lembrar por 30 dias
+              <FormLabel htmlFor="login-remember" className="text-[#9CA3AF] text-sm font-normal cursor-pointer">
+                Remember me for 30 days
               </FormLabel>
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit" disabled={isLoading}>
-          {isLoading ? "Entrando..." : "Entrar"}
+        <Button 
+          className="w-full bg-[#00ADE8] hover:bg-[#0096CC] text-[#0B0C0E] font-medium" 
+          type="submit" 
+          disabled={isLoading}
+        >
+          {isLoading ? "Authenticating..." : "Sign In"}
         </Button>
       </form>
     </Form>

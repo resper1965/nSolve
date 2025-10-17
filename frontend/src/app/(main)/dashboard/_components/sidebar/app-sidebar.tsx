@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
-import { Settings, CircleHelp, Search, Database, ClipboardList, File, Command } from "lucide-react";
+import { Settings, CircleHelp, Search } from "lucide-react";
 
 import {
   Sidebar,
@@ -13,71 +12,51 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { APP_CONFIG } from "@/config/app-config";
+import { NSolveLogo } from "@/components/ness-logo";
 import { rootUser } from "@/data/users";
 import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 
-const data = {
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: CircleHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: Database,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: ClipboardList,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: File,
-    },
-  ],
-};
+const navSecondary = [
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
+  },
+  {
+    title: "Help",
+    url: "#",
+    icon: CircleHelp,
+  },
+  {
+    title: "Search",
+    url: "#",
+    icon: Search,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="border-b border-[#1B2030]">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-3 hover:bg-[#111317]">
               <Link href="/dashboard/default">
-                <Command />
-                <span className="text-base font-semibold">{APP_CONFIG.name}</span>
+                <NSolveLogo size="md" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      
+      <SidebarContent className="bg-[#0B0C0E]">
         <NavMain items={sidebarItems} />
-        {/* <NavDocuments items={data.documents} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter>
+      
+      <SidebarFooter className="border-t border-[#1B2030] bg-[#0B0C0E]">
         <NavUser user={rootUser} />
       </SidebarFooter>
     </Sidebar>

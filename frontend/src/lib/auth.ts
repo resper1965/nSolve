@@ -54,12 +54,18 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
     // Salvar token
     if (data.token) {
+      // Salvar em cookies (para middleware)
+      document.cookie = `auth_token=${data.token}; path=/; max-age=${credentials.remember ? 30 * 24 * 60 * 60 : 0}; SameSite=Strict`;
+      
+      // Salvar em storage (para frontend)
       if (credentials.remember) {
         localStorage.setItem('auth_token', data.token);
         localStorage.setItem('auth_user', JSON.stringify(data.user));
+        localStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
       } else {
         sessionStorage.setItem('auth_token', data.token);
         sessionStorage.setItem('auth_user', JSON.stringify(data.user));
+        sessionStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
       }
     }
 
@@ -95,11 +101,16 @@ export async function logout(): Promise<void> {
   } catch (error) {
     console.error('Logout error:', error);
   } finally {
+    // Limpar cookies
+    document.cookie = 'auth_token=; path=/; max-age=0';
+    
     // Limpar storage
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_tenant');
     sessionStorage.removeItem('auth_token');
     sessionStorage.removeItem('auth_user');
+    sessionStorage.removeItem('auth_tenant');
   }
 }
 

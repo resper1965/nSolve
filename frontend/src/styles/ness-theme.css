@@ -1,0 +1,97 @@
+/**
+ * ness. Design System - Dark-first theme
+ * n.Solve Vulnerability Lifecycle Manager
+ */
+
+@layer base {
+  :root {
+    /* ness. Color Palette */
+    --ness-background: 11 12 14; /* #0B0C0E */
+    --ness-surface-1: 17 19 23; /* #111317 */
+    --ness-surface-2: 21 24 32; /* #151820 */
+    --ness-surface-3: 27 32 48; /* #1B2030 */
+    --ness-text: 238 241 246; /* #EEF1F6 */
+    --ness-text-muted: 156 163 175; /* #9CA3AF */
+    --ness-accent: 0 173 232; /* #00ADE8 */
+    --ness-accent-hover: 0 150 204; /* #0096CC */
+    
+    /* Semantic colors */
+    --background: var(--ness-background);
+    --foreground: var(--ness-text);
+    
+    --card: var(--ness-surface-1);
+    --card-foreground: var(--ness-text);
+    
+    --popover: var(--ness-surface-2);
+    --popover-foreground: var(--ness-text);
+    
+    --primary: var(--ness-accent);
+    --primary-foreground: 11 12 14;
+    
+    --secondary: var(--ness-surface-2);
+    --secondary-foreground: var(--ness-text);
+    
+    --muted: var(--ness-surface-2);
+    --muted-foreground: var(--ness-text-muted);
+    
+    --accent: var(--ness-accent);
+    --accent-foreground: 11 12 14;
+    
+    --destructive: 239 68 68;
+    --destructive-foreground: var(--ness-text);
+    
+    --border: var(--ness-surface-3);
+    --input: var(--ness-surface-2);
+    --ring: var(--ness-accent);
+    
+    --radius: 0.5rem;
+    
+    /* Transitions */
+    --ness-transition: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+  
+  /* Smooth transitions */
+  button, a, input, select, textarea {
+    transition: all var(--ness-transition);
+  }
+}
+
+/* ness. Accent color utilities */
+@layer utilities {
+  .text-ness-accent {
+    color: rgb(var(--ness-accent));
+  }
+  
+  .bg-ness-accent {
+    background-color: rgb(var(--ness-accent));
+  }
+  
+  .border-ness-accent {
+    border-color: rgb(var(--ness-accent));
+  }
+  
+  .hover\:text-ness-accent:hover {
+    color: rgb(var(--ness-accent));
+  }
+  
+  .hover\:bg-ness-accent:hover {
+    background-color: rgb(var(--ness-accent));
+  }
+}
+
