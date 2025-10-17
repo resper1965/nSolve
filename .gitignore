@@ -1,0 +1,38 @@
+# ness. VLM Tracker - Cloudflare Edition
+
+# Secrets e credenciais
+webhook-secret.txt
+deployment-urls.txt
+*.env
+*.env.local
+.dev.vars
+.project-config
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.pnpm-debug.log*
+
+# Wrangler
+.wrangler/
+dist/
+*.backup
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build
+build/
+.cache/

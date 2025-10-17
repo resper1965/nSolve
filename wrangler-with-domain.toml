@@ -1,0 +1,114 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "ness-vlm-tracker"
+compatibility_date = "2024-01-15"
+
+# =====================================
+# WEBHOOK RECEIVER WORKER
+# =====================================
+[[workers]]
+name = "webhook-receiver"
+main = "workers/webhook-receiver/index.ts"
+compatibility_date = "2024-01-15"
+
+# Variáveis de ambiente
+[workers.vars]
+CORE_PROCESSOR_URL = "https://api.ness.tec.br"
+
+# KV Namespace para rate limiting
+[[workers.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "your-kv-namespace-id"  # Atualizar após criar
+
+# Rota com domínio customizado
+[[workers.routes]]
+pattern = "webhooks.ness.tec.br/*"
+zone_name = "ness.tec.br"
+
+# =====================================
+# CORE PROCESSOR WORKER
+# =====================================
+[[workers]]
+name = "core-processor"
+main = "workers/core-processor/index.ts"
+compatibility_date = "2024-01-15"
+
+# D1 Database binding
+[[workers.d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "your-d1-database-id"  # Atualizar após criar
+
+# R2 Storage binding
+[[workers.r2_buckets]]
+binding = "VLM_STORAGE"
+bucket_name = "ness-vlm-storage"
+
+# Durable Object bindings
+[[workers.durable_objects.bindings]]
+name = "TRANSLATION_QUEUE"
+class_name = "TranslationQueue"
+script_name = "translation-agent"
+
+[[workers.durable_objects.bindings]]
+name = "JIRA_QUEUE"
+class_name = "JiraQueue"
+script_name = "jira-integration"
+
+# Rota com domínio customizado
+[[workers.routes]]
+pattern = "api.ness.tec.br/*"
+zone_name = "ness.tec.br"
+
+# =====================================
+# TRANSLATION AGENT WORKER
+# =====================================
+[[workers]]
+name = "translation-agent"
+main = "workers/translation-agent/index.ts"
+compatibility_date = "2024-01-15"
+
+# Workers AI binding
+[workers.ai]
+binding = "AI"
+
+# D1 Database binding
+[[workers.d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "your-d1-database-id"  # Atualizar após criar
+
+# Durable Object
+[[workers.durable_objects.bindings]]
+name = "TRANSLATION_QUEUE"
+class_name = "TranslationQueue"
+
+[[workers.migrations]]
+tag = "v1"
+new_classes = ["TranslationQueue"]
+
+# =====================================
+# JIRA INTEGRATION WORKER
+# =====================================
+[[workers]]
+name = "jira-integration"
+main = "workers/jira-integration/index.ts"
+compatibility_date = "2024-01-15"
+
+# Variáveis de ambiente
+[workers.vars]
+JIRA_PROJECT_KEY = "APPWEB"
+
+# D1 Database binding
+[[workers.d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "your-d1-database-id"  # Atualizar após criar
+
+# Durable Object
+[[workers.durable_objects.bindings]]
+name = "JIRA_QUEUE"
+class_name = "JiraQueue"
+
+[[workers.migrations]]
+tag = "v1"
+new_classes = ["JiraQueue"]

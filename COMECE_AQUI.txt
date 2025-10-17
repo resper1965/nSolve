@@ -1,0 +1,157 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║                  🚀 COMECE AQUI - ness. VLM Tracker                     ║
+║                                                                          ║
+║                   Cloudflare Edge Computing Edition                      ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+👤 CONTA CLOUDFLARE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Email: resper@ness.com.br
+   Plano: Workers Paid ($5/mês) ✅
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 DOMÍNIO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Domínio Principal: ness.tec.br
+   
+   URLs Finais (após configurar DNS):
+   • https://webhooks.ness.tec.br  ← Webhook público
+   • https://api.ness.tec.br       ← API interna
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ DEPLOY AUTOMÁTICO (RECOMENDADO):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Execute APENAS 2 comandos:
+   
+   1️⃣  cd /home/resper/ness-vlm-cloudflare
+       ./START.sh
+   
+   2️⃣  Escolha opção "1" (Deploy Automático)
+   
+   ⏱️  Tempo total: 2-3 minutos
+   
+   O script faz TUDO automaticamente:
+   ✅ Cria D1 Database
+   ✅ Cria R2 Bucket
+   ✅ Cria KV Namespace
+   ✅ Atualiza configurações (IDs)
+   ✅ Executa schema SQL
+   ✅ Gera e configura secrets
+   ✅ Deploy de 4 Workers
+   ✅ Testa automaticamente
+   ✅ Salva todas as URLs
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 CHECKLIST RÁPIDA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Antes do deploy:
+   [ ] Plano Workers Paid ativo ($5/mês) ✅ (você já tem!)
+   [ ] Conta: resper@ness.com.br
+   [ ] Node.js 18+ instalado
+   
+   Durante o deploy:
+   [ ] Login no Cloudflare (npx wrangler login)
+   [ ] Executar ./START.sh
+   [ ] Escolher opção "1"
+   [ ] Aguardar 2-3 minutos
+   
+   Depois do deploy:
+   [ ] Anotar URL do webhook (salva automaticamente)
+   [ ] Anotar webhook secret (salvo em webhook-secret.txt)
+   [ ] Configurar domínio ness.tec.br (DNS_SETUP.md)
+   [ ] Configurar ferramentas de pentest
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 CONFIGURAÇÃO DO DOMÍNIO (Depois do Deploy):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   1. Cloudflare Dashboard (dash.cloudflare.com)
+      • Faça login com: resper@ness.com.br
+      • Add Site → ness.tec.br
+      • Plano Free (grátis)
+      • Copiar os 2 nameservers
+   
+   2. Registro.br
+      • Alterar nameservers do ness.tec.br
+      • Colar nameservers da Cloudflare
+      • Salvar
+   
+   3. Aguardar propagação DNS (30 min a 24h)
+   
+   4. Adicionar Custom Domains:
+      • webhook-receiver → webhooks.ness.tec.br
+      • core-processor → api.ness.tec.br
+   
+   📖 Guia detalhado: DNS_SETUP.md
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 ARQUIVOS IMPORTANTES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   START.sh              → Menu interativo (EXECUTE ESTE!)
+   deploy-auto.sh        → Deploy 100% automático
+   QUICK_DEPLOY.md       → Guia rápido de deploy
+   DNS_SETUP.md          → Como apontar DNS
+   DEPLOY_PROCESS.md     → Processo completo explicado
+   README.md             → Documentação completa
+   
+   Após deploy:
+   webhook-secret.txt    → Seu webhook secret (GUARDE!)
+   deployment-urls.txt   → URLs de todos os workers
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💰 CUSTOS (Plano $5/mês):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Plano Base:          $5.00/mês
+   
+   Incluído no plano:
+   • 10M requests Workers
+   • 5GB D1 Database
+   • 10GB R2 Storage
+   • 1M Durable Objects requests
+   • Workers AI (10k neurons/dia)
+   
+   Para 10k vulnerabilidades/mês:
+   • Custo TOTAL: $5/mês (tudo incluído!)
+   • Economia vs GCP: $190/mês 🎉
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 COMEÇAR AGORA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   cd /home/resper/ness-vlm-cloudflare
+   ./START.sh
+   
+   Escolha "1" → Deploy Automático
+   
+   Aguarde 2-3 minutos... e está PRONTO! ✅
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 SUPORTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Email: security@ness.com
+   Conta Cloudflare: resper@ness.com.br
+   Domínio: ness.tec.br
+   
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+              ⚡ Desenvolvido pela ness. ⚡
+         Powered by Cloudflare Edge Computing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,33 @@
+{
+  "name": "ness-vlm-tracker-cloudflare",
+  "version": "2.0.0",
+  "description": "ness. VLM Tracker - Cloudflare Edge Computing Edition",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:webhook": "wrangler deploy workers/webhook-receiver/index.ts",
+    "deploy:core": "wrangler deploy workers/core-processor/index.ts",
+    "deploy:translation": "wrangler deploy workers/translation-agent/index.ts",
+    "deploy:jira": "wrangler deploy workers/jira-integration/index.ts",
+    "db:init": "wrangler d1 execute ness_vlm_db --file=schema/d1-schema.sql",
+    "db:migrations": "wrangler d1 migrations list ness_vlm_db",
+    "tail:webhook": "wrangler tail webhook-receiver",
+    "tail:core": "wrangler tail core-processor",
+    "lint": "eslint workers/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.90.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
