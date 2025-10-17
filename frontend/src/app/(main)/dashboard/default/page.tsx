@@ -20,7 +20,10 @@ export default function DashboardDefaultPage() {
     try {
       const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
       
-      const response = await fetch('https://api.ness.tec.br/vulnerabilities', {
+      // Usar URL do .env ou fallback
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://core-processor.ness.workers.dev';
+      
+      const response = await fetch(`${apiUrl}/vulnerabilities`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
