@@ -3,6 +3,10 @@ name = "nsolve"
 main = "workers/webhook-receiver/index.ts"
 compatibility_date = "2024-01-15"
 
+# Build configuration
+[build]
+command = "npm run deploy"
+
 # Environment variables
 [vars]
 CORE_PROCESSOR_URL = "https://core-processor.workers.dev"
