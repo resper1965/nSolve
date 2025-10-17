@@ -79,7 +79,6 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
                 <div className="w-2 h-2 rounded-full bg-green-400"></div>
                 <span className="text-[#9CA3AF]">All systems operational</span>
               </div>
-              <div className="text-[#9CA3AF]">Powered by Cloudflare Edge</div>
             </div>
             <div className="text-xs text-[#9CA3AF]">
               © {new Date().getFullYear()} <span className="text-[#EEF1F6]">ness</span>
