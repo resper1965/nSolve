@@ -9,19 +9,10 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/auth/v2/login",
-        permanent: false,
-      },
-      {
-        source: "/dashboard",
-        destination: "/dashboard/default",
-        permanent: false,
-      },
-    ];
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
   },
 }
 

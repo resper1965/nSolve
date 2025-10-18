@@ -1,0 +1,31 @@
+{
+  "asset_id": "asset-prod-web-01",
+  "tenant_id": "tenant_ness",
+  "findings": [
+    {
+      "id": "finding-001",
+      "name": "SQL Injection in Login Form",
+      "risk_level": "critical",
+      "url": "https://app.ness.tec.br/login",
+      "parameter": "username",
+      "cwe": "89",
+      "cvss": 9.8,
+      "description": "SQL injection vulnerability detected in the username parameter of the login form.",
+      "vuln_evidence": "Payload: ' OR '1'='1 resulted in authentication bypass",
+      "recommendation": "Use parameterized queries to prevent SQL injection attacks."
+    },
+    {
+      "id": "finding-002",
+      "name": "Cross-Site Scripting (XSS)",
+      "risk_level": "high",
+      "url": "https://app.ness.tec.br/search",
+      "parameter": "q",
+      "cwe": "79",
+      "cvss": 7.5,
+      "description": "Reflected XSS vulnerability in search parameter.",
+      "vuln_evidence": "Payload: <script>alert('XSS')</script> executed in the browser",
+      "recommendation": "Sanitize and encode user input before rendering."
+    }
+  ]
+}
+

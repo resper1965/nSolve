@@ -5,6 +5,17 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_AUTH_URL || 'https://auth-service.ness.workers.dev';
 
+/**
+ * Base64 URL decode (com padding automático)
+ */
+function base64urlDecode(str: string): string {
+  const padding = '='.repeat((4 - (str.length % 4)) % 4);
+  const base64 = (str + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
+  return atob(base64);
+}
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -54,7 +65,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
     // Salvar token
     if (data.token) {
-      console.log('🔐 Saving auth token');
+      console.log('🔐 Saving auth token from new schema');
       
       // Salvar em cookies (para middleware)
       const maxAge = credentials.remember ? 30 * 24 * 60 * 60 : 86400; // 30 dias ou 1 dia
@@ -63,15 +74,20 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
       // Salvar em storage (para frontend)
       localStorage.setItem('auth_token', data.token);
       localStorage.setItem('auth_user', JSON.stringify(data.user));
-      localStorage.setItem('auth_tenant', JSON.stringify(data.tenant));
+      localStorage.setItem('auth_organization', JSON.stringify(data.organization || data.tenant));
       
-      console.log('✅ Auth saved - Cookie:', document.cookie.substring(0, 50));
-      console.log('✅ LocalStorage:', !!localStorage.getItem('auth_token'));
+      console.log('✅ Auth saved');
+      console.log('✅ User:', data.user);
+      console.log('✅ Organization:', data.organization || data.tenant);
     }
 
     return {
       success: true,
-      user: data.user,
+      user: {
+        ...data.user,
+        token: data.token,
+        role: (data.organization?.role || data.tenant?.role || 'user') as any
+      },
       token: data.token,
     };
   } catch (error) {
@@ -147,11 +163,38 @@ export function isAuthenticated(): boolean {
 }
 
 /**
+ * Verificar token localmente (client-side)
+ */
+export function verifyTokenLocal(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+
+    const payload = JSON.parse(base64urlDecode(parts[1]));
+    
+    // Verificar expiração
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Verificar token com o backend
  */
 export async function verifyToken(): Promise<boolean> {
   const token = getToken();
   if (!token) return false;
+
+  // Primeiro verificar localmente
+  if (!verifyTokenLocal(token)) {
+    await logout();
+    return false;
+  }
 
   try {
     const response = await fetch(`${API_BASE_URL}/auth/verify`, {
@@ -170,7 +213,8 @@ export async function verifyToken(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error('Token verification error:', error);
-    return false;
+    // Em caso de erro de rede, aceitar se token for válido localmente
+    return verifyTokenLocal(token);
   }
 }
 

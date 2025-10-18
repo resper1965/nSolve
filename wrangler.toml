@@ -12,8 +12,8 @@ JIRA_INTEGRATION_URL = "https://jira-integration.workers.dev"
 # D1 Database
 [[d1_databases]]
 binding = "VLM_DB"
-database_name = "ness_vlm_db"
-database_id = "9b16f85c-715e-4a09-aa7e-482b17d0c208"
+database_name = "ness-vlm-db"
+database_id = "9b8306ff-56a5-4395-bdf5-6a9c001be368"
 
 # R2 Storage
 [[r2_buckets]]
@@ -28,3 +28,8 @@ binding = "AI"
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
 id = "f89200c908114f39bdb44e55f0244be3"
+
+# KV Namespace for cache
+[[kv_namespaces]]
+binding = "NESS_VLM_CACHE"
+id = "9b00c1feca51468f8a19d110bda74356"

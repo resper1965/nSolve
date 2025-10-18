@@ -2,6 +2,8 @@
  * n.Solve - Core Processor Worker (RBAC Multi-tenant)
  */
 
+import { syncVulnerability, batchSyncVulnerabilities, VulnerabilityIngestPayload } from './cross-tool-sync';
+
 export interface Env {
   VLM_DB: D1Database;
   VLM_STORAGE: R2Bucket;
@@ -163,6 +165,142 @@ export default {
 
     if (url.pathname === '/vulnerabilities' && request.method === 'GET') {
       return await listVulnerabilities(request, env);
+    }
+
+    if (url.pathname.match(/^\/vulnerabilities\/[^/]+$/) && request.method === 'GET') {
+      const id = url.pathname.split('/')[2];
+      const context = await verifyJWT(request, env.JWT_SECRET);
+      if (!context) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      }
+
+      const vuln = await env.VLM_DB.prepare('SELECT * FROM vulnerabilities WHERE id = ? AND tenant_id = ?')
+        .bind(id, context.tenant_id)
+        .first();
+
+      if (!vuln) {
+        return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
+      }
+
+      return new Response(JSON.stringify({ success: true, data: vuln }), { 
+        status: 200,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (url.pathname.match(/^\/vulnerabilities\/[^/]+$/) && request.method === 'DELETE') {
+      const id = url.pathname.split('/')[2];
+      const context = await verifyJWT(request, env.JWT_SECRET);
+      if (!context) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      }
+
+      await env.VLM_DB.prepare('DELETE FROM vulnerabilities WHERE id = ? AND tenant_id = ?')
+        .bind(id, context.tenant_id)
+        .run();
+
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (url.pathname.match(/^\/vulnerabilities\/[^/]+$/) && request.method === 'PUT') {
+      const id = url.pathname.split('/')[2];
+      const context = await verifyJWT(request, env.JWT_SECRET);
+      if (!context) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      }
+
+      const body = await request.json() as any;
+      const updates: string[] = [];
+      const values: any[] = [];
+
+      if (body.title) { updates.push('title = ?'); values.push(body.title); }
+      if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
+      if (body.severity) { updates.push('severity = ?'); values.push(body.severity); }
+      if (body.status) { updates.push('status = ?'); values.push(body.status); }
+      if (body.cve !== undefined) { updates.push('cve = ?'); values.push(body.cve); }
+      if (body.cvss_score !== undefined) { updates.push('cvss_score = ?'); values.push(body.cvss_score); }
+
+      updates.push('updated_at = CURRENT_TIMESTAMP');
+      values.push(id);
+      values.push(context.tenant_id);
+
+      await env.VLM_DB.prepare(`UPDATE vulnerabilities SET ${updates.join(', ')} WHERE id = ? AND tenant_id = ?`)
+        .bind(...values)
+        .run();
+
+      const updated = await env.VLM_DB.prepare('SELECT * FROM vulnerabilities WHERE id = ? AND tenant_id = ?')
+        .bind(id, context.tenant_id)
+        .first();
+
+      return new Response(JSON.stringify({ success: true, data: updated }), {
+        status: 200,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+      });
+    }
+
+    // POST /vulnerabilities/ingest - Cross-Tool Ingestion Endpoint
+    if (url.pathname === '/vulnerabilities/ingest' && request.method === 'POST') {
+      const context = await verifyJWT(request, env.JWT_SECRET);
+      if (!context) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      }
+
+      try {
+        const body = await request.json() as VulnerabilityIngestPayload | VulnerabilityIngestPayload[];
+        
+        // Suporte para single ou batch
+        const isBatch = Array.isArray(body);
+        const payloads = isBatch ? body : [body];
+        
+        // Validar tenant_id nos payloads
+        for (const payload of payloads) {
+          if (payload.tenant_id !== context.tenant_id) {
+            return new Response(JSON.stringify({ 
+              error: 'Forbidden',
+              message: 'Payload tenant_id must match authenticated tenant'
+            }), { status: 403 });
+          }
+        }
+        
+        // Processar ingestão
+        const results = await batchSyncVulnerabilities(env.VLM_DB, payloads);
+        
+        // Calcular estatísticas
+        const stats = {
+          total: results.length,
+          created: results.filter(r => r.action === 'CREATED').length,
+          updated: results.filter(r => r.action === 'UPDATED').length,
+          no_change: results.filter(r => r.action === 'NO_CHANGE').length,
+        };
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: `Processed ${stats.total} vulnerabilities`,
+          stats,
+          results: results.map(r => ({
+            finding_id: r.finding_id,
+            action: r.action,
+            strategy: r.deduplication_strategy,
+            matched_by: r.matched_by,
+          })),
+        }), {
+          status: 200,
+          headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+        });
+        
+      } catch (error: any) {
+        console.error('[CoreProcessor] Error in /vulnerabilities/ingest:', error);
+        return new Response(JSON.stringify({ 
+          error: 'Internal Server Error',
+          message: error.message 
+        }), { 
+          status: 500,
+          headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+        });
+      }
     }
 
     if (url.pathname === '/health') {

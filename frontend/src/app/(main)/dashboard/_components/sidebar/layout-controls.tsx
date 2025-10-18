@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { updateContentLayout, updateNavbarStyle } from "@/lib/layout-utils";
 import { updateThemeMode, updateThemePreset } from "@/lib/theme-utils";
-import { setValueToCookie } from "@/server/server-actions";
+// import { setValueToCookie } from "@/server/server-actions";
 import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 import type { SidebarVariant, SidebarCollapsible, ContentLayout, NavbarStyle } from "@/types/preferences/layout";
 import { THEME_PRESET_OPTIONS, type ThemePreset, type ThemeMode } from "@/types/preferences/theme";
@@ -47,7 +47,7 @@ export function LayoutControls(props: LayoutControlsProps) {
     if (key === "navbar_style") {
       updateNavbarStyle(value);
     }
-    await setValueToCookie(key, value);
+    // await setValueToCookie(key, value);
   };
 
   return (

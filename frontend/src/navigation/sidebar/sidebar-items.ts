@@ -9,6 +9,7 @@ import {
   Settings,
   FileText,
   ExternalLink,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -90,22 +91,24 @@ export const sidebarItems: NavGroup[] = [
     label: "Administration",
     items: [
       {
+        title: "Organizations",
+        url: "/dashboard/admin/organizations",
+        icon: Building2,
+      },
+      {
         title: "Users",
-        url: "/dashboard/users",
+        url: "/dashboard/admin/users",
         icon: Users,
-        comingSoon: true,
+      },
+      {
+        title: "Integrations",
+        url: "/dashboard/integrations",
+        icon: ExternalLink,
       },
       {
         title: "Settings",
         url: "/dashboard/settings",
         icon: Settings,
-        comingSoon: true,
-      },
-      {
-        title: "Jira Integration",
-        url: "/dashboard/jira",
-        icon: ExternalLink,
-        comingSoon: true,
       },
     ],
   },

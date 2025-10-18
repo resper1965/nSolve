@@ -1,0 +1,29 @@
+# n.Solve - Analytics Agent Configuration
+# Cron Trigger para cálculo de MTTR e métricas
+
+name = "analytics-agent"
+main = "workers/analytics-agent/index.ts"
+compatibility_date = "2024-01-15"
+
+# Cron Trigger - Executa diariamente à 1h da manhã UTC
+[triggers]
+crons = ["0 1 * * *"]
+
+# D1 Database
+[[d1_databases]]
+binding = "VLM_DB"
+database_name = "ness-vlm-db"
+database_id = "9b8306ff-56a5-4395-bdf5-6a9c001be368"
+
+# R2 Storage para payloads brutos
+[[r2_buckets]]
+binding = "VLM_STORAGE"
+bucket_name = "ness-vlm-storage"
+
+# AI para análises avançadas
+[ai]
+binding = "AI"
+
+# Workers dev habilitado para testes
+workers_dev = true
+

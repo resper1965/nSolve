@@ -1,0 +1,19 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "governance-api"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+
+# D1 Database Binding
+[[d1_databases]]
+binding = "VLM_DB"
+database_name = "ness_vlm_db"
+database_id = "9b16f85c-715e-4a09-aa7e-482b17d0c208"
+
+# Secrets (JWT_SECRET deve ser configurado via wrangler secret)
+# wrangler secret put JWT_SECRET --name governance-api
+
+# Custom domain route
+[[routes]]
+pattern = "governance.ness.tec.br/*"
+zone_name = "ness.tec.br"
+

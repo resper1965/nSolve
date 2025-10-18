@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   keywords: ["vulnerability", "security", "pentest", "lifecycle", "management", "ness"],
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html
       lang="en"
